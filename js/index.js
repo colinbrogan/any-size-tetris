@@ -1,6 +1,6 @@
-var resolutionX = 30;
+var resolutionX = 20;
 var resolutionY = 6;
-var tileSize = 30;
+var tileSize = 50;
 var fps = 3;
 var $grid = $('#scaling-grid-tetris');
 var shapes = [
@@ -59,7 +59,7 @@ var frameEvent = function() {
     }
 
   });  
-  for (var clearedRow in clearedRows)
+  for (var clearedRow in clearedRows) {
     for(var scanx = clearedRow; scanx <= resolutionX; scanx++) {
       for(var scany = 1; scany <= resolutionY; scany++) {
         var $thisCell = $(makeCoordinates(scanx,scany));
@@ -74,6 +74,7 @@ var frameEvent = function() {
         }
       }
     }
+  }
 
   var rowFilledTo = {};
   $('.plat-shade').each(function() {
