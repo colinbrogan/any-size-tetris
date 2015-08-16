@@ -5,16 +5,15 @@
 
 .tile {
   color: grey;
+  background: #eaeaea;
   display:inline-block;
-  border: 1px solid #eaeaea;
+  border: 1px solid #fff;
   margin: -1px;
   padding: 0;
   line-height:30px;
   padding: 0px;
   font-size: 8px;
 }
-
-
 
 .tile.shape-shade {
   background: black;
@@ -32,5 +31,5 @@
 }
 
 .game-over {
-  background: red;
+  border-color: red !important;
 }

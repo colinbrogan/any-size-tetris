@@ -1,18 +1,24 @@
-var resolutionX = 20;
-var resolutionY = 6;
-var tileSize = 50;
+var resolutionX = 10;
+var resolutionY = 4;
+var tileSize = 10;
 var fps = 3;
 var $grid = $('#scaling-grid-tetris');
 var shapes = [
-    "xxxx",
-    "xxx\
-     x..",
-    "xx\
-     xx",
-    ".xx\
-     xx.",
-    ".x.\
-     xxx"
+
+"xxxx",
+
+"xxx\n
+ x..",
+
+"xx\n
+ xx",
+
+".xx\n
+ xx.",
+
+".x.\n
+ xxx"
+
 ];
 var shapeDelay = 6;
 var frameCounter = 0;
@@ -34,11 +40,11 @@ function buildScreen() {
 }
 
 function gameOver() {
-  $(".shape-shade").each(function() {
-    $(this).removeClass("shape-shade");
-    $grid.addClass("game-over");
-    clearInterval(frameEvent);
-  })
+  $(".tile.plat-shade").removeClass("plat-shade");
+  $(".tile.shape-shade").removeClass("shape-shade");
+  $(".tile.plat-remove").removeClass("plat-remove");
+  $grid.addClass("game-over");
+  clearInterval(frameEvent);
 }
 
 var frameEvent = function() {
@@ -103,10 +109,13 @@ var frameEvent = function() {
   if(frameCounter == 1 || landed == true) {
     var randy = Math.ceil(Math.random()*resolutionY);
     var priorcell = '#x'+(resolutionX-1)+'-'+'y'+randy;
+    $('#x'+resolutionX+'-'+'y'+randy).addClass("shape-shade");
+    if($grid.hasClass("game-over")) {
+      $grid.removeClass("game-over");
+    }
     if( $(priorcell).hasClass("plat-shade")) {
       gameOver();
     } else {
-      $('#x'+resolutionX+'-'+'y'+randy).addClass("shape-shade");
       landed = false;
     }
   }
