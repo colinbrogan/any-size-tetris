@@ -44,6 +44,37 @@ function gameOver() {
 var frameEvent = function() {
   // physics of shapes 
   moveLeft();
+
+  // clear fullRows
+  var rowFilledTo = {};
+  $('.plat-shade').each(function() {
+    var coordinates = $(this).attr("id").split("-");
+    var x = coordinates[0].slice(1);
+    var y = coordinates[1].slice(1);
+    if(!rowFilledTo.hasOwnProperty(x)) {
+      rowFilledTo[x] = 1;
+    } else {
+      rowFilledTo[x]++;
+    }
+  });
+  for(var row in rowFilledTo) {
+    if(rowFilledTo[row] == resolutionY) {
+      for(var y = 1; y <= resolutionY; y++) {
+        var x = row;
+        $(makeCoordinates(x,y)).removeClass("plat-shade");
+      }
+      $('.plat-shade').each(function() {
+        var coordinates = $(this).attr("id").split("-");
+        var x = coordinates[0].slice(1);
+        var y = coordinates[1].slice(1);
+        $(this).removeClass("plat-shade");
+        $(makeCoordinates(x-1,y)).addClass("plat-shade");
+      });
+    }
+  }
+
+
+
   // Feed Shapes into grid
   if(frameCounter == 1 || landed == true) {
     var randy = Math.ceil(Math.random()*resolutionY);
@@ -90,8 +121,11 @@ var moveUp = function() {
     var newcoordinates = "#x"+x+"-"+"y"+newy;
     console.log(coordinates);
     console.log(newcoordinates);
-    $(this).removeClass("shape-shade");
-    $(newcoordinates).addClass("shape-shade");
+    if(!$(newcoordinates).hasClass("plat-shade")) {
+      $(this).removeClass("shape-shade");
+      $(newcoordinates).addClass("shape-shade");
+    }
+
   });
 }
 
@@ -107,8 +141,11 @@ var moveDown = function() {
     var newcoordinates = "#x"+x+"-"+"y"+newy;
     console.log(coordinates);
     console.log(newcoordinates);
-    $(this).removeClass("shape-shade");
-    $(newcoordinates).addClass("shape-shade");
+    if(!$(newcoordinates).hasClass("plat-shade")) {
+      $(this).removeClass("shape-shade");
+      $(newcoordinates).addClass("shape-shade");
+    }
+
   });
 }
 
@@ -130,3 +167,9 @@ $(document).ready(function() {
     }
   });
 });
+
+// utility
+
+function makeCoordinates(x,y) {
+  return "#x"+x+"-y"+y;
+}
