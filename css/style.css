@@ -24,6 +24,13 @@
   background: #666;
 }
 
+.tile.plat-remove {
+  background: red;
+  transition: opacity 1s;
+  -webkit-transition: opacity 1s;
+  opacity: 0;
+}
+
 .game-over {
   background: red;
 }

@@ -46,6 +46,35 @@ var frameEvent = function() {
   moveLeft();
 
   // clear fullRows
+  var clearedRows = {};
+  $('.plat-remove').each(function() {
+    $(this).removeClass("plat-remove");
+    var coordinates = $(this).attr("id").split("-");
+    var x = coordinates[0].slice(1);
+    var y = coordinates[1].slice(1);
+    if(!clearedRows.hasOwnProperty(x)) {
+      clearedRows[x] = true;
+    } else {
+      clearedRows[x] = true;
+    }
+
+  });  
+  for (var clearedRow in clearedRows)
+    for(var scanx = clearedRow; scanx <= resolutionX; scanx++) {
+      for(var scany = 1; scany <= resolutionY; scany++) {
+        var $thisCell = $(makeCoordinates(scanx,scany));
+        var $priorCell = $(makeCoordinates(Number(scanx) - 1,scany));
+        if( $thisCell.hasClass("plat-shade") ) {
+          $thisCell.removeClass("plat-shade");
+          console.log("$thisCell");
+          console.log($thisCell);
+          $priorCell.addClass("plat-shade");
+          console.log("$priorCell");
+          console.log($priorCell);
+        }
+      }
+    }
+
   var rowFilledTo = {};
   $('.plat-shade').each(function() {
     var coordinates = $(this).attr("id").split("-");
@@ -61,15 +90,9 @@ var frameEvent = function() {
     if(rowFilledTo[row] == resolutionY) {
       for(var y = 1; y <= resolutionY; y++) {
         var x = row;
+        $(makeCoordinates(x,y)).addClass("plat-remove");
         $(makeCoordinates(x,y)).removeClass("plat-shade");
       }
-      $('.plat-shade').each(function() {
-        var coordinates = $(this).attr("id").split("-");
-        var x = coordinates[0].slice(1);
-        var y = coordinates[1].slice(1);
-        $(this).removeClass("plat-shade");
-        $(makeCoordinates(x-1,y)).addClass("plat-shade");
-      });
     }
   }
 
