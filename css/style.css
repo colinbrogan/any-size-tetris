@@ -1,0 +1,29 @@
+#scaling-grid-tetris {
+  line-height: 0;
+  border: 5px solid gray;
+}
+
+.tile {
+  color: grey;
+  display:inline-block;
+  border: 1px solid #eaeaea;
+  margin: -1px;
+  padding: 0;
+  line-height:30px;
+  padding: 0px;
+  font-size: 8px;
+}
+
+
+
+.tile.shape-shade {
+  background: black;
+}
+
+.tile.plat-shade {
+  background: #666;
+}
+
+.game-over {
+  background: red;
+}
