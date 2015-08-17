@@ -1,25 +1,38 @@
 var resolutionX = 10;
 var resolutionY = 4;
 var tileSize = 10;
-var fps = 3;
+var fps = 1;
 var $grid = $('#scaling-grid-tetris');
-var shapes = [
 
-"xxxx",
-
-"xxx\n
- x..",
-
-"xx\n
- xx",
-
-".xx\n
- xx.",
-
-".x.\n
- xxx"
-
+var colin_babies = [
+  [ 
+    "XXXX",
+  ],
+  [
+    "XXX",
+    "X  ",
+  ],
+  [
+    "XXX",
+    "  X",
+  ],
+  [
+    "XXX",
+    " X ",
+  ],
+  [
+    "XX",
+    "XX",
+  ],
 ];
+
+var lilly_is_pregnant = true;
+var freeze_all = false;
+
+var current_shape = null;
+var current_shape_scan_index = 0;
+var feedMoveOffset = 0;
+
 var shapeDelay = 6;
 var frameCounter = 0;
 var landed = false;
@@ -48,7 +61,7 @@ function gameOver() {
 }
 
 var frameEvent = function() {
-  // physics of shapes 
+  // physics of colin_babies 
   moveLeft();
 
   // clear fullRows
@@ -72,11 +85,7 @@ var frameEvent = function() {
         var $priorCell = $(makeCoordinates(Number(scanx) - 1,scany));
         if( $thisCell.hasClass("plat-shade") ) {
           $thisCell.removeClass("plat-shade");
-          console.log("$thisCell");
-          console.log($thisCell);
           $priorCell.addClass("plat-shade");
-          console.log("$priorCell");
-          console.log($priorCell);
         }
       }
     }
@@ -105,20 +114,42 @@ var frameEvent = function() {
 
 
 
-  // Feed Shapes into grid
-  if(frameCounter == 1 || landed == true) {
-    var randy = Math.ceil(Math.random()*resolutionY);
-    var priorcell = '#x'+(resolutionX-1)+'-'+'y'+randy;
-    $('#x'+resolutionX+'-'+'y'+randy).addClass("shape-shade");
+  // Feed colin_babies into grid
+  if(frameCounter < 1 || landed == true || lilly_is_pregnant) {
+//    var randy = Math.ceil(Math.random()*(resolutionY - (current_shape.length - 1)));
+    var randy = resolutionY;
+    if(current_shape_scan_index == 0) {
+      current_shape = colin_babies[Math.floor(Math.random()*colin_babies.length)];
+      console.log(current_shape);
+    }
+    var baby_length = 0;
+    for(var column = 0; column < current_shape.length; column++) {
+      var row = current_shape[column];
+      if(row.length > baby_length) {
+        baby_length = row.length;
+      }
+      if(row.charAt(current_shape_scan_index) == "X") {
+        console.log(makeCoordinates(resolutionX,randy - column))
+        $(makeCoordinates(resolutionX,randy - column)).addClass("shape-shade");
+      }
+    }
+    var priorcell = makeCoordinates(resolutionX-1,randy);
     if($grid.hasClass("game-over")) {
       $grid.removeClass("game-over");
     }
-    if( $(priorcell).hasClass("plat-shade")) {
+    if( $(priorcell).hasClass("plat-shade") ) {
       gameOver();
     } else {
       landed = false;
+      current_shape_scan_index++;
+
+      if(current_shape_scan_index == baby_length) {
+        current_shape_scan_index = 0;
+        lilly_is_pregnant = false;
+      }
     }
   }
+  
   frameCounter++;
 }
 
@@ -130,16 +161,21 @@ var moveLeft = function() {
     var newx = x - 1;
     var newcoordinates = "#x"+newx+"-"+"y"+y;
     var $priorcell = $(newcoordinates);
-    if(newx > 0 && !$priorcell.hasClass("plat-shade")) {
+    if(newx > 0 && !$priorcell.hasClass("plat-shade") && !freeze_all) {
       $(this).removeClass("shape-shade");
       $priorcell.addClass("shape-shade");
       landed = false;
     } else {
-      $(this).removeClass("shape-shade");
-      $(this).addClass("plat-shade");
+      freeze_all = true;
+      $('.shape-shade').each(function() {
+        $(this).removeClass("shape-shade");
+        $(this).addClass("plat-shade");
+      });
       landed = true;
+      lilly_is_pregnant = true;
     }
   });
+  freeze_all = false;
 }
 
 var moveUp = function() {
@@ -152,8 +188,6 @@ var moveUp = function() {
       newy = Number(y) + 1;
     }
     var newcoordinates = "#x"+x+"-"+"y"+newy;
-    console.log(coordinates);
-    console.log(newcoordinates);
     if(!$(newcoordinates).hasClass("plat-shade")) {
       $(this).removeClass("shape-shade");
       $(newcoordinates).addClass("shape-shade");
@@ -172,8 +206,6 @@ var moveDown = function() {
       newy = Number(y) - 1;
     }
     var newcoordinates = "#x"+x+"-"+"y"+newy;
-    console.log(coordinates);
-    console.log(newcoordinates);
     if(!$(newcoordinates).hasClass("plat-shade")) {
       $(this).removeClass("shape-shade");
       $(newcoordinates).addClass("shape-shade");
@@ -192,7 +224,7 @@ $(document).ready(function() {
   setInterval(frameEvent, 1000/fps);
   $(window).on("keydown",function(event) { 
     if(event.keyCode == 37) {
-      moveLeft();
+      frameEvent();
     } else if (event.keyCode == 38) {
       moveUp();
     } else if (event.keyCode == 40) {
