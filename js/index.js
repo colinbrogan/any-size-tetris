@@ -1,6 +1,6 @@
-var resolutionX = 10;
-var resolutionY = 4;
-var tileSize = 10;
+var resolutionX = 40;
+var resolutionY = 6;
+var tileSize = 20;
 var fps = 1;
 var $grid = $('#scaling-grid-tetris');
 
